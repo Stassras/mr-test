@@ -6,9 +6,9 @@ const DataField = ({ data }) => {
     return (
         <ul className="list-group">
             {
-                data.map(el => {
+                data.map((el, index) => {
                     return (
-                        <li className="list-group-item">
+                        <li key={index} className="list-group-item">
                             <span>{el}</span>
                         </li>
                     )

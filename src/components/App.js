@@ -16,7 +16,8 @@ export default class App extends Component {
     this.state = {
       data: [],
       value: '',
-      register: false
+      register: false,
+      filter: 'none'
     };
     this.updateData()
   };
@@ -31,28 +32,87 @@ export default class App extends Component {
       .then(this.onDataLoaded);
   }
 
+  lengthSearch(data) {
+    const { value } = this.state;
+    const reg = /^\d+$/;
+    if (value === '') return data;
+    if (!reg.test(value)) {
+      alert("Please enter only numbers")
+      return data
+    }
+
+    return data.filter(el => el.length > +value);
+  }
+
+  substringSearch(data) {
+    const { value, register } = this.state;
+
+    if (!register) {
+      return data.filter(el => el.toLowerCase().indexOf(value.toLowerCase()) > -1);
+    }
+    return data.filter(el => el.indexOf(value) > -1);
+  }
+
+  filter(data) {
+    switch (this.state.filter) {
+      case "none":
+        return data;
+      case "substring":
+        return this.substringSearch(data);
+      case "length":
+        return this.lengthSearch(data);
+      default: return data;
+    }
+  }
+
+  inputHandler = (value) => {
+    this.setState({ value })
+  }
+
+  onToggleLength = () => {
+    this.setState({
+      filter: 'length'
+    })
+  }
+
+  onToggleSubstring = () => {
+    this.setState({
+      filter: 'substring'
+    })
+  }
+
+  onToggleRegister = () => {
+    this.setState((state) => {
+      return {
+        register: !state.register
+      }
+    })
+  }
+
   render() {
     const { value, data, register } = this.state;
+
+    const visibleData = this.filter(data);
 
     return (
       <div className="container test-app">
         <div className="d-flex row">
           <div className="col-md-6 mb-3">
-            <InputPanel value={value} />
+            <InputPanel value={value} inputHandler={this.inputHandler} />
           </div>
           <div className="d-flex align-items-center col-md-6 mb-3">
             <div className="form-check">
-              <input className="form-check-input" type="checkbox" checked={register} id="register" />
+              <input className="form-check-input" onChange={this.onToggleRegister} type="checkbox" checked={register} id="register" />
               <label className="form-check-label text-muted" htmlFor="register">
                 Case sensitive
               </label>
             </div>
-            <button className="btn btn-primary ml-auto" type="button">Length</button>
-            <button className="btn btn-success ml-2" type="button">Substring</button>
+            <button onClick={this.onToggleLength} className="btn btn-primary ml-auto" type="button">Length</button>
+            <button onClick={this.onToggleSubstring} className="btn btn-success ml-2" type="button">Substring</button>
           </div>
         </div>
         <div>
-          <DataField data={data} />
+          <DataField data={visibleData} />
         </div>
       </div>
     );
