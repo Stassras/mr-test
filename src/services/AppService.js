@@ -15,8 +15,8 @@ export default class AppService {
         return this._transformData(body);
     };
 
-    _transformData(data){
-        return [ ...data.data];
+    _transformData(data) {
+        return [...data.data];
     }
 
 };

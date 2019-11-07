@@ -8,8 +8,6 @@ import './App.css';
 
 export default class App extends Component {
 
-
-
   constructor() {
     super();
     this.appService = new AppService();
@@ -21,7 +19,6 @@ export default class App extends Component {
     };
     this.updateData()
   };
-
 
   onDataLoaded = (data) => {
     this.setState({ data });
@@ -37,7 +34,6 @@ export default class App extends Component {
     const reg = /^\d+$/;
     if (value === '') return data;
     if (!reg.test(value)) {
-      alert("Please enter only numbers")
       return data
     }
 
@@ -90,15 +86,18 @@ export default class App extends Component {
   }
 
   render() {
-    const { value, data, register } = this.state;
+    const { value, data, register, filter } = this.state;
 
     const visibleData = this.filter(data);
+
+    const primary = 'btn-primary';
+    const secondary = 'btn-outline-primary'
 
     return (
       <div className="container test-app">
         <div className="d-flex row">
           <div className="col-md-6 mb-3">
-            <InputPanel value={value} inputHandler={this.inputHandler} />
+            <InputPanel value={value} inputHandler={this.inputHandler} filter={filter} />
           </div>
           <div className="d-flex align-items-center col-md-6 mb-3">
             <div className="form-check">
@@ -107,8 +106,8 @@ export default class App extends Component {
                 Case sensitive
               </label>
             </div>
-            <button onClick={this.onToggleLength} className="btn btn-primary ml-auto" type="button">Length</button>
-            <button onClick={this.onToggleSubstring} className="btn btn-success ml-2" type="button">Substring</button>
+            <button onClick={this.onToggleLength} className={`btn ${filter === 'length' ? primary : secondary} ml-auto`} type="button">Length</button>
+            <button onClick={this.onToggleSubstring} className={`btn ${filter === 'substring' ? primary : secondary} ml-2`} type="button">Substring</button>
           </div>
         </div>
         <div>
